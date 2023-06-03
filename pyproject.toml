@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "gcp_commons"
+name = "gcp-commons"
 version = "0.0.1"
 authors = [
     { name="Silas Berger", email="silas.berger@outlook.com" },
