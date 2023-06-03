@@ -5,14 +5,13 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-_SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
-
 
 class GcpAuthHandler:
 
-    def __init__(self, gcp_credentials_file: os.path, token_tmp_file: os.path) -> None:
+    def __init__(self, gcp_credentials_file: os.path, token_tmp_file: os.path, scopes: [str]) -> None:
         self._gcp_credentials_file = gcp_credentials_file
         self._token_tmp_file = token_tmp_file
+        self._scopes = scopes
         self._cached_token = None
 
     @staticmethod
@@ -24,7 +23,7 @@ class GcpAuthHandler:
 
     def _try_from_token_file(self):
         if os.path.exists(self._token_tmp_file):
-            return Credentials.from_authorized_user_file(self._token_tmp_file, _SCOPES)
+            return Credentials.from_authorized_user_file(self._token_tmp_file, self._scopes)
 
     def _refresh_or_authenticate(self, token):
         if token and token.expired and token.refresh_token:
@@ -38,7 +37,7 @@ class GcpAuthHandler:
         return new_token
 
     def _perform_auth_flow(self):
-        flow = InstalledAppFlow.from_client_secrets_file(self._gcp_credentials_file, _SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(self._gcp_credentials_file, self._scopes)
         return flow.run_local_server(port=0)
 
     def _export_token_file(self, token):
